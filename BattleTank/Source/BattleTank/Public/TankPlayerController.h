@@ -21,8 +21,15 @@ public:
 	virtual void BeginPlay() override;
 
 private:
-
 	ATank* GetControlledTank() const;
 	ATank* ControlledTank = nullptr;
 	void AimTowardsCrosshair(); //barrel movement
+	bool GetHitLocation(FVector &OutHitLocation) const; //use reference for OUT parameters
+	bool GetLookDirection(FVector2D ScreenLocation, FVector & LookDirection) const;
+	UPROPERTY(EditAnywhere)
+		float CrosshairXPos = 0.5;
+	UPROPERTY(EditAnywhere)
+		float CrosshairYPos = 0.33333;
 };
+
+
