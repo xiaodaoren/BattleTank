@@ -1,5 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "DrawDebugHelpers.h"
 #include "TankPlayerController.h"
 
 void ATankPlayerController::Tick(float DeltaTime)
@@ -44,7 +45,32 @@ bool ATankPlayerController::GetHitLocation(FVector &OutHitLocation) const
 	FVector LookDirection;
 	if (GetLookDirection(ScreenLocation, LookDirection))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *LookDirection.ToString())
+		FHitResult HitResult;
+		float LineTraceRange = 10000000.f;
+		FVector LineStart;
+		FRotator ActorRot;
+		GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(LineStart, ActorRot);
+		FVector LineEnd = LineStart + LookDirection * LineTraceRange;
+		FCollisionQueryParams TraceParams(FName(TEXT("")), false, GetOwner());
+		FCollisionResponseParams ResponseParams(ECR_Block);
+		DrawDebugLine(
+			GetWorld(),
+			LineStart,
+			LineEnd,
+			FColor (255,0,0),
+			false,
+			-1.f,
+			0,
+			1.f
+		);
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, LineStart, LineEnd, ECollisionChannel::ECC_Visibility, TraceParams, ResponseParams))
+		{
+			OutHitLocation = LineStart + ActorRot.Vector() * HitResult.Distance;
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *OutHitLocation.ToString())
+			return true;
+		}
+		else return false;
+		
 	}
 	//overwrite HitLocation with result
 	OutHitLocation = FVector(1.0);
