@@ -26,11 +26,14 @@ private:
 	ATank* ControlledTank = nullptr;
 	void AimTowardsCrosshair(); //barrel movement
 	bool GetHitLocation(FVector &OutHitLocation) const; //use reference for OUT parameters
+	bool LineTrace(FVector & OutHitLocation, FVector &LookDirection) const;
 	bool GetLookDirection(FVector2D ScreenLocation, FVector & LookDirection) const;
 	UPROPERTY(EditAnywhere)
 		float CrosshairXPos = 0.5;
 	UPROPERTY(EditAnywhere)
 		float CrosshairYPos = 0.33333;
+	UPROPERTY(EditAnywhere)
+		float LineTraceRange = 10000000.f;
 };
 
 

@@ -1,7 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "DrawDebugHelpers.h"
+
 #include "TankPlayerController.h"
+#include "DrawDebugHelpers.h"
 
 void ATankPlayerController::Tick(float DeltaTime)
 {
@@ -32,6 +33,7 @@ void ATankPlayerController::AimTowardsCrosshair()
 	FVector HitLocation; //OUT parameter
 	if (GetHitLocation(HitLocation))
 	{
+		GetControlledTank()->AimAt(HitLocation);
 		//UE_LOG(LogTemp, Warning, TEXT("%s"), *HitLocation.ToString())
 	}
 }
@@ -45,39 +47,33 @@ bool ATankPlayerController::GetHitLocation(FVector &OutHitLocation) const
 	FVector LookDirection;
 	if (GetLookDirection(ScreenLocation, LookDirection))
 	{
-		FHitResult HitResult;
-		float LineTraceRange = 10000000.f;
-		FVector LineStart;
-		FRotator ActorRot;
-		GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(LineStart, ActorRot);
-		FVector LineEnd = LineStart + LookDirection * LineTraceRange;
-		FCollisionQueryParams TraceParams(FName(TEXT("")), false, GetOwner());
-		FCollisionResponseParams ResponseParams(ECR_Block);
-		DrawDebugLine(
-			GetWorld(),
-			LineStart,
-			LineEnd,
-			FColor (255,0,0),
-			false,
-			-1.f,
-			0,
-			1.f
-		);
-		if (GetWorld()->LineTraceSingleByChannel(HitResult, LineStart, LineEnd, ECollisionChannel::ECC_Visibility, TraceParams, ResponseParams))
-		{
-			OutHitLocation = LineStart + ActorRot.Vector() * HitResult.Distance;
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *OutHitLocation.ToString())
-			return true;
-		}
-		else return false;
-		
+		LineTrace(OutHitLocation, LookDirection);
+		return true;
 	}
-	//overwrite HitLocation with result
 	OutHitLocation = FVector(1.0);
-	//if HitLocation is null
 	return false;
-	//else return true
 }
+
+bool ATankPlayerController::LineTrace(FVector &HitLocation, FVector &LookDirection) const
+{
+	FHitResult HitResult;
+	FVector LineStart;
+	FRotator ActorRot;
+	GetWorld()->GetFirstPlayerController()->GetPlayerViewPoint(LineStart, ActorRot);
+	FVector LineEnd = LineStart + LookDirection * LineTraceRange;
+	//FCollisionQueryParams TraceParams(FName(TEXT("")), false, GetOwner());
+	//FCollisionResponseParams ResponseParams(ECR_Block);
+	//DrawDebugLine(GetWorld(), LineStart, LineEnd, FColor (255,0,0), false, -1.f, 0, 1.f); 
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, LineStart, LineEnd, ECollisionChannel::ECC_Visibility))  //, TraceParams, ResponseParams)) trace and response params optional
+	{
+		//OutHitLocation = LineStart + ActorRot.Vector() * HitResult.Distance;
+		HitLocation = HitResult.Location;
+		return true;
+	}
+	HitLocation = FVector(0);
+	return false;
+}
+
 bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const
 {
 	FVector WorldLocation; //discarded later
