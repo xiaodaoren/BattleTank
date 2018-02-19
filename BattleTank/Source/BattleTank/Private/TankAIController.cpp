@@ -39,7 +39,7 @@ void ATankAIController::AimTowardsPlayer()
 	if (!GetControlledTank()) return;
 	if (PlayerTank)
 	{
-		GetControlledTank()->AimAt(PlayerTank->GetActorLocation());
+		GetControlledTank()->FindComponentByClass<UTankAimingComponent>()->AimAt(PlayerTank->GetActorLocation());
 	}
 }
 
