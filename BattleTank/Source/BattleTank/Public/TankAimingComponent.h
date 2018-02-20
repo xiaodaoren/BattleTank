@@ -28,6 +28,7 @@ protected:
 
 public:	
 	void AimAt(FVector HitLocation, float LaunchSpeed);
+	int frame = 0;
 	
 private: 
 	UTankBarrel* Barrel = nullptr;
