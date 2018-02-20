@@ -4,6 +4,7 @@
 
 
 
+
 void ATankAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -39,7 +40,8 @@ void ATankAIController::AimTowardsPlayer()
 	if (!GetControlledTank()) return;
 	if (PlayerTank)
 	{
-		GetControlledTank()->FindComponentByClass<UTankAimingComponent>()->AimAt(PlayerTank->GetActorLocation());
+		GetControlledTank()->AimAt(PlayerTank->GetActorLocation());
+		//GetControlledTank()->FindComponentByClass<UTankAimingComponent>()->AimAt(PlayerTank->GetActorLocation());
 	}
 }
 
