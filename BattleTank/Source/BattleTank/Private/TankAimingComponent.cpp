@@ -2,6 +2,7 @@
 
 #include "TankAimingComponent.h"
 #include "TankBarrel.h"
+#include "TankTurret.h"
 
 
 // Sets default values for this component's properties
@@ -9,7 +10,7 @@ UTankAimingComponent::UTankAimingComponent()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -17,7 +18,14 @@ UTankAimingComponent::UTankAimingComponent()
 
 void UTankAimingComponent::SetBarrelRef(UTankBarrel * BarrelToSet)
 {
+	if (!BarrelToSet) return;
 	Barrel = BarrelToSet;
+}
+
+void UTankAimingComponent::SetTurretRef(UTankTurret * TurretToSet)
+{
+	if (!TurretToSet) return;
+	Turret = TurretToSet;
 }
 
 void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
@@ -30,10 +38,8 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 	{
 		auto AimDirection = OutLaunchVelocity.GetSafeNormal();
 		MoveBarrel(AimDirection);
-		frame++;
-		UE_LOG(LogTemp, Warning, TEXT("solution found at frame %d"), frame)
+		MoveTurret(AimDirection);
 	}
-	else UE_LOG(LogTemp, Warning, TEXT("no solution found at frame %d"), frame)
 }
 
 void UTankAimingComponent::MoveBarrel(FVector AimDir)
@@ -42,4 +48,12 @@ void UTankAimingComponent::MoveBarrel(FVector AimDir)
 	auto AimRot = AimDir.Rotation();
 	auto DeltaRot = AimRot - BarrelRot;
 	Barrel->Elevate(DeltaRot.Pitch);
+}
+
+void UTankAimingComponent::MoveTurret(FVector AimDir)
+{
+	auto TurretRot = Turret->GetForwardVector().Rotation();
+	auto AimRot = AimDir.Rotation();
+	auto DeltaRot = AimRot - TurretRot;
+	Turret->Rotate(DeltaRot.Yaw);
 }
