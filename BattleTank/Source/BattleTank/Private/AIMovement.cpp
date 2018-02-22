@@ -20,10 +20,10 @@ void UAIMovement::MoveAlongSpline()
 	UE_LOG(LogTemp, Warning, TEXT("%d"), Time)
 	auto CurrentPos = GetOwner()->GetActorLocation();
 	//auto DesiredPos = GetLocationAtDistanceAlongSpline(GetDistanceAlongSplineAtSplinePoint(SplineIndex), ESplineCoordinateSpace::World);
-	//auto SplineDir = FindDirectionClosestToWorldLocation(CurrentPos, ESplineCoordinateSpace::World);
-	auto SplineDir = GetWorldDirectionAtTime(Time, true); 
-	//auto SplineRot = FindRotationClosestToWorldLocation(CurrentPos, ESplineCoordinateSpace::World);
-	auto SplineRot = GetRotationAtTime(Time, ESplineCoordinateSpace::World);
+	auto SplineDir = FindDirectionClosestToWorldLocation(CurrentPos, ESplineCoordinateSpace::World);
+	//auto SplineDir = GetWorldDirectionAtTime(Time, true); 
+	auto SplineRot = FindRotationClosestToWorldLocation(CurrentPos, ESplineCoordinateSpace::World);
+	//auto SplineRot = GetRotationAtTime(Time, ESplineCoordinateSpace::World);
 	auto NewPos = CurrentPos + MovementSpeed * SplineDir;// *Time;
 	GetOwner()->SetActorLocation(NewPos);
 	GetOwner()->SetActorRelativeRotation(SplineRot); // TODO relative?
