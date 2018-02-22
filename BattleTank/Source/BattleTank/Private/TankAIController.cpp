@@ -50,7 +50,10 @@ void ATankAIController::MoveAlongSpline()
 {
 	if (!GetControlledTank()) return;
 	UAIMovement * Spline = GetControlledTank()->FindComponentByClass<UAIMovement>();
-	if(Spline) Spline->MoveAlongSpline();
+	if (Spline) Spline->MoveAlongSpline(); 
+	/*{
+		auto bla = MoveToLocation(Spline->GetNextGoal(), (-1.0f), false);
+	}*/
 }
 
 

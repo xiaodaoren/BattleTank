@@ -15,19 +15,37 @@
 void UAIMovement::MoveAlongSpline()
 {
 	Time = UGameplayStatics::GetRealTimeSeconds(GetWorld());
-
 	Time = fmod(Time, Duration);
-	UE_LOG(LogTemp, Warning, TEXT("%d"), Time)
+	
+	Distance = Distance + MovementSpeed;
 	auto CurrentPos = GetOwner()->GetActorLocation();
 	//auto DesiredPos = GetLocationAtDistanceAlongSpline(GetDistanceAlongSplineAtSplinePoint(SplineIndex), ESplineCoordinateSpace::World);
 	auto SplineDir = FindDirectionClosestToWorldLocation(CurrentPos, ESplineCoordinateSpace::World);
 	//auto SplineDir = GetWorldDirectionAtTime(Time, true); 
+	//auto SplineDir = GetDirectionAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
+	SplineDir.Z = GetOwner()->GetActorForwardVector().Z; //overwrite Z with tank's forward vector
 	auto SplineRot = FindRotationClosestToWorldLocation(CurrentPos, ESplineCoordinateSpace::World);
 	//auto SplineRot = GetRotationAtTime(Time, ESplineCoordinateSpace::World);
-	auto NewPos = CurrentPos + MovementSpeed * SplineDir;// *Time;
-	GetOwner()->SetActorLocation(NewPos);
-	GetOwner()->SetActorRelativeRotation(SplineRot); // TODO relative?
+	//auto SplineRot = GetRotationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
 	
+	auto NewPos = CurrentPos + MovementSpeed * SplineDir;
+	GetOwner()->SetActorLocation(NewPos);
+	GetOwner()->SetActorRelativeRotation(SplineRot); 
+	
+	UE_LOG(LogTemp, Warning, TEXT("%d"), Time)
 	auto LineEnd = CurrentPos + SplineDir * 1000;
 	DrawDebugLine(GetWorld(), CurrentPos, LineEnd, FColor(255, 0, 0), false, -1.f, 0, 50.f);
+}
+
+FVector UAIMovement::GetNextGoal()
+{
+	Distance = Distance + MovementSpeed;
+	NextGoal = GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
+	//NextGoal.Z = GetOwner()->GetActorForwardVector().Z;
+
+	UE_LOG(LogTemp, Warning, TEXT("Goal Location: %s"), *NextGoal.ToString())
+	auto CurrentPos = GetOwner()->GetActorLocation();
+	DrawDebugLine(GetWorld(), CurrentPos, NextGoal, FColor(255, 0, 0), false, -1.f, 0, 50.f);
+
+	return NextGoal;
 }

@@ -15,9 +15,13 @@ class BATTLETANK_API UAIMovement : public USplineComponent
 	GENERATED_BODY()
 public:
 	void MoveAlongSpline();
+	FVector GetNextGoal();
 	
 private:
 	UPROPERTY(EditAnywhere)
 		float MovementSpeed = 5;
 	int32 Time;
+	float Distance = 0;
+
+	FVector NextGoal;
 };
