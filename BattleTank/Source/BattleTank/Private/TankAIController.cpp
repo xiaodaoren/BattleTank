@@ -2,6 +2,7 @@
 
 #include "TankAIController.h"
 #include "Tank.h"
+#include "AIMovement.h"
 
 
 
@@ -9,6 +10,7 @@ void ATankAIController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	AimTowardsPlayer();
+	MoveAlongSpline();
 }
 
 void ATankAIController::BeginPlay()
@@ -31,7 +33,6 @@ ATank* ATankAIController::GetControlledTank() const
 ATank * ATankAIController::GetPlayerTank() const
 {
 	return Cast<ATank>(GetWorld()->GetFirstPlayerController()->GetPawn());
-
 }
 
 void ATankAIController::AimTowardsPlayer()
@@ -43,6 +44,13 @@ void ATankAIController::AimTowardsPlayer()
 		GetControlledTank()->AimAt(PlayerTank->GetActorLocation());
 		//GetControlledTank()->FindComponentByClass<UTankAimingComponent>()->AimAt(PlayerTank->GetActorLocation());
 	}
+}
+
+void ATankAIController::MoveAlongSpline()
+{
+	if (!GetControlledTank()) return;
+	UAIMovement * Spline = GetControlledTank()->FindComponentByClass<UAIMovement>();
+	if(Spline) Spline->MoveAlongSpline();
 }
 
 
