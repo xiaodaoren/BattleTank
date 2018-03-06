@@ -32,7 +32,6 @@ void UAIMovement::MoveAlongSpline()
 	GetOwner()->SetActorLocation(NewPos);
 	GetOwner()->SetActorRelativeRotation(SplineRot); 
 	
-	UE_LOG(LogTemp, Warning, TEXT("%d"), Time)
 	auto LineEnd = CurrentPos + SplineDir * 1000;
 	DrawDebugLine(GetWorld(), CurrentPos, LineEnd, FColor(255, 0, 0), false, -1.f, 0, 50.f);
 }
@@ -43,7 +42,6 @@ FVector UAIMovement::GetNextGoal()
 	NextGoal = GetLocationAtDistanceAlongSpline(Distance, ESplineCoordinateSpace::World);
 	//NextGoal.Z = GetOwner()->GetActorForwardVector().Z;
 
-	UE_LOG(LogTemp, Warning, TEXT("Goal Location: %s"), *NextGoal.ToString())
 	auto CurrentPos = GetOwner()->GetActorLocation();
 	DrawDebugLine(GetWorld(), CurrentPos, NextGoal, FColor(255, 0, 0), false, -1.f, 0, 50.f);
 
